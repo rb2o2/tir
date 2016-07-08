@@ -1,0 +1,190 @@
+<HTML>
+<BODY onload="MoveGrif()" onmousemove="MouseMove()" onmousedown="Shoot()" onmouseup="Gun()" ondragstart="JavaScript: return false" onselectstart="JavaScript: return false" STYLE="cursor: crosshair" bgcolor=#00AA00>
+<INPUT type="text" name="text1">
+<INPUT type="text" name="text2">
+<INPUT type="text" name="text3">
+<INPUT type="text" name="text4">
+<DIV id='gun' STYLE='position: absolute; left:500; top:320'>
+<IMG name='imggun' src='Images/gun1.png' title='Ружьё'>
+</DIV>
+<DIV id='pic' STYLE='position: absolute; left:100; top:100'>
+<IMG name='picpricel' src='Images/pricel.gif' title='Прицел'>
+</DIV>
+<DIV id='grif' style="position: absolute; left: 869px; top: 0px">
+<IMG name='picgrif' src='Images/grif0.gif' width=92 height=56 title='Гриф' onmousedown="Hit()">
+</DIV>
+<SCRIPT language="JavaScript">
+
+//Переменные грифа
+hit=0;
+minkadr=3;
+stepkadr=1;
+kadr=minkadr;
+buff=kadr;
+maxkadr=5;
+grifWidth=92;
+grifHeight=56;
+xmingrif=-grifWidth;
+xmaxgrif=780+grifWidth;
+ymingrif=0;
+ygrif=Math.round(Math.random()*400);
+ymaxgrif=100;
+xgrif=xmaxgrif;
+ygrif=ymingrif;
+xstepgrif=-Math.round(Math.random()*10)-4;
+ystepgrif=0;
+
+//Общие переменные
+kadrbull=7;
+kadrbullmax=14;
+kadrbullmin=kadrbull;
+minkadrbull=5;
+stepkadrbull=1;
+pricelx=17;
+pricely=46;
+centrx=6;
+centry=6;
+xbullet=1;
+ybullet=430;  //690
+xbulletstep=11;
+maxbullet=45;
+numhole=0;
+maxhole=100;
+bullets=maxbullet;
+kolkadr=0;
+Bitmap=new Array(kolkadr);
+//Hole=new Array(maxhole);
+DirFileName=new Array("bullet","dirka","pricel","grif","250","gun");
+objnum=0;
+//Создаём ленту из патрон
+for (i=0; i<=maxbullet; i=i+1)
+   {
+   CreateImage(objnum,0,0,xbullet,ybullet,'Патрон');   
+   objnum++;
+   xbullet=xbullet+xbulletstep;
+   }
+
+LoadImages(0,0,1);
+LoadImages(1,0,1);
+LoadImages(2,1,'');
+LoadImages(3,3,'0');
+LoadImages(4,3,'1');
+LoadImages(5,3,'2');
+LoadImages(6,4,'');
+LoadImages(7,5,'1');
+LoadImages(8,5,'2');
+LoadImages(9,5,'3');
+LoadImages(10,5,'4');
+LoadImages(11,5,'5');
+LoadImages(12,5,'6');
+LoadImages(13,5,'7');
+LoadImages(14,5,'8');
+
+
+//CreateImage(maxbullet+1,'',2,100,100,'Прицел');
+
+//Создаём изображения дырок
+function Holes(numhole,x,y)
+{
+ApiHole="<IMG name='hole"+numhole+"' STYLE='position: absolute; left:"+x+";top:"+y+"'>";
+document.write(ApiHole);
+document.all['hole'+numhole].src=Bitmap[2].src;
+}
+
+for (i=0; i<maxhole; i++)
+{
+Holes(i,-100,-100);
+}
+
+alert('Скрипт выполнился');
+
+function LoadImages(objnum,i,j)
+{
+   Bitmap[objnum] = new Image();
+   Bitmap[objnum].src="Images/"+DirFileName[i]+j+".png";
+ //  alert('Имя файла='+DirFileName[i]+j);
+ //  alert('Номер ячейки='+objnum);
+   objnum++;
+}
+
+function CreateImage(objnum,i,ImgPath,DivLeft,DivTop,title)
+{
+ApIImage="<DIV name='pic"+objnum+"' STYLE='position: absolute; left:"+DivLeft+"; top:"+DivTop+"'>"+
+"<IMG name='image"+objnum+"' src='Images/"+DirFileName[ImgPath]+i+".png' onmousemove='HelpOn(this.name)' onmouseout='HelpOff(this.name)' title='"+title+"'>"+
+"</DIV>";
+document.write(ApIImage);
+}
+
+function MouseMove()
+{
+x=window.event.clientX-centrx;
+y=window.event.clientY-centry;
+pic.style.left=x-pricelx;
+pic.style.top=y-pricely;
+document.all.text1.value="Прицел Х="+x;
+document.all.text2.value="Прицел Y="+y;
+}
+
+
+function Gun()
+{
+if(kadrbull<=kadrbullmax) {kadrbull=kadrbull+stepkadrbull} else {kadrbull=7;document.all['imggun'].src=Bitmap[kadrbull].src};
+document.all['imggun'].src=Bitmap[kadrbull].src;
+setTimeout("Gun()",120);
+}
+
+function Shoot()
+{
+//if(bullets<0){document.all['imggun'].src=Bitmap[kadrbullmin].src; JavaScript: return false};
+document.all['hole'+numhole].style.left=x;
+document.all['hole'+numhole].style.top=y;   
+numhole++;
+if (numhole>=maxhole) {numhole=0};
+document.all['hole'+numhole].src=Bitmap[2].src;
+document.all['image'+bullets].src=Bitmap[1].src;
+bullets=bullets-1;
+//if(kadrbull<=kadrbullmax) {kadrbull=kadrbull+stepkadrbull} else {kadrbull=7;document.all['imggun'].src=Bitmap[kadrbull].src};
+//document.all['imggun'].src=Bitmap[kadrbull].src;
+//setTimeout("Shoot()",120);
+//setTimeout("Gun",120);
+}
+
+function HelpOff(obj)
+{
+document.all.text3.value="";
+}
+
+function HelpOn(obj)
+{
+document.all.text3.value=obj;
+}
+
+function MoveGrif()
+{xgrif=xgrif+xstepgrif;
+grif.style.left=xgrif;
+grif.style.top=ygrif;
+if(xgrif<xmingrif){console.log('hit=0');xgrif=xmaxgrif;document.all['picgrif'].src=Bitmap[3].src;ygrif=Math.round(Math.random()*400);hit=0;stepkadr=1;ystepgrif=0};
+if(kadr<=minkadr){stepkadr=1;document.all['picgrif'].src=Bitmap[kadr].src};
+if(kadr>=maxkadr){stepkadr=-1;document.all['picgrif'].src=Bitmap[kadr].src};
+kadr=kadr+stepkadr;
+document.all.text3.value="Гриф Х="+xgrif;
+document.all.text4.value="Гриф Y="+ygrif;
+setTimeout("MoveGrif()",60);
+}
+
+function Hit()
+{
+hit=1;
+DownGrif();
+//alert(('Попал !'))
+}
+
+function DownGrif()
+{
+if(xgrif>xmingrif){document.all['picgrif'].src=Bitmap[6].src;stepkadr=0};
+//setTimeout("DownGrif()",60);
+}
+
+</SCRIPT>
+</BODY>
+</HTML>
